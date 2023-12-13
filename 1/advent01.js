@@ -1,39 +1,31 @@
-const fs = require('node:fs');
-const readline = require('node:readline'); 
+const fs = require('fs');
+const readline = require('readline');
+
+const fileStream = fs.createReadStream('input.txt');
+
+const rl = readline.createInterface({
+  input: fileStream,
+  crlfDelay: Infinity
+});
 
 let sum = 0;
-function readFile(file) {
-    return new Promise((res, rej) => {
-        try {
-            var readInterface = readline.createInterface({
-                input: fs.createReadStream(file),
-                terminal: false
-            });
-
-            readInterface
-                .on('line', function (line) {
-                    let num = ""; 
-                    for (let i = 0; i < line.length; i++){
-                        if (line[i] >= '0' && line[i] <= '9'){
-                            num += line[i];
-                            break;
-                        }
-                    }
-                    for (let i = line.length-1; i >= 0; i--){
-                        if (line[i] >= '0' && line[i] <= '9'){
-                            num += line[i];
-                            break;
-                        }
-                    }
-                    sum += parseInt(num);
-                })
-                .on('close', function () {
-                    res(sum);
-                });
-        } catch(err){
-            rej(err)
+rl.on('line', (line) => {
+    let num = ""; 
+    for (let i = 0; i < line.length; i++){
+        if (line[i] >= '0' && line[i] <= '9'){
+            num += line[i];
+            break;
         }
-    });
-}
+    }
+    for (let i = line.length-1; i >= 0; i--){
+        if (line[i] >= '0' && line[i] <= '9'){
+            num += line[i];
+            break;
+        }
+    }
+    sum += parseInt(num);
+});
 
-readFile('input.txt').then(x => console.log(x))
+rl.on('close', () => {
+  console.log(sum);
+});
